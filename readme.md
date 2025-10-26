@@ -7,7 +7,7 @@ La solución está diseñada con una estructura escalable y modular, fácilmente
 
 ## 📘 Diagrama del Sistema
 
-![Arquitectura Distribuida](./diagrama.png)
+![Arquitectura Distribuida](./diagrama.jpg)
 
 **Descripción de componentes:**
 
@@ -34,7 +34,7 @@ La solución está diseñada con una estructura escalable y modular, fácilmente
 .
 ├── client.py
 ├── server.py
-├── diagrama.png
+├── diagrama.jpg
 └── README.md
 ```
 
