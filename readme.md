@@ -1,7 +1,7 @@
 # 🧩 Arquitectura Distribuida con Python y Sockets
 
-Este proyecto implementa una arquitectura distribuida básica utilizando **sockets TCP**, **thread pools**, y una **cola de mensajes simulada** que emula el funcionamiento de **RabbitMQ**.  
-La solución está diseñada con una estructura escalable y modular, fácilmente integrable con balanceadores como **NGINX** o **HAProxy**, y sistemas distribuidos de almacenamiento como **PostgreSQL** y **S3/MinIO**.
+Este proyecto implementa una **arquitectura distribuida básica** utilizando **sockets TCP**, **thread pools** y una **cola de mensajes simulada**, emulando el comportamiento de **RabbitMQ**.  
+La solución está diseñada con una estructura **modular, escalable y extensible**, apta para integrarse con balanceadores como **NGINX** o **HAProxy**, y con sistemas distribuidos de almacenamiento como **PostgreSQL** o **MinIO/S3**.
 
 ---
 
@@ -9,26 +9,25 @@ La solución está diseñada con una estructura escalable y modular, fácilmente
 
 ![Arquitectura Distribuida](./diagrama.jpg)
 
-**Descripción de componentes:**
+### Descripción de componentes
 
-- **Clientes (Web / Mobile App):** envían tareas al sistema.
-- **Balanceador (NGINX o HAProxy):** distribuye conexiones TCP a los nodos workers.
-- **Worker Nodes (Server.py):** servidores concurrentes con pool de threads que procesan tareas.
-- **RabbitMQ (simulado con `queue.Queue`):** cola de mensajes que orquesta tareas y resultados.
-- **Almacenamiento Distribuido:**
-  - **PostgreSQL DB:** registro de resultados y logs.
-  - **S3 / MinIO:** almacenamiento de archivos u objetos grandes.
+- **Clientes (Web / CLI / Mobile):** envían tareas al sistema mediante conexión TCP.
+- **Balanceador (NGINX o HAProxy):** distribuye las solicitudes hacia los nodos de procesamiento.
+- **Worker Nodes (`server.py`):** servidores concurrentes que procesan tareas usando un pool de threads.
+- **RabbitMQ simulado:** implementado con `queue.Queue` para gestionar el flujo de mensajes.
+- **Almacenamiento:**
+  - **SQLite:** persistencia local de resultados y logs.
 
 ---
 
-## ⚙️ Requisitos previos
+## ⚙️ Requisitos Previos
 
 - Python **3.9+**
-- Librerías estándar (`threading`, `socket`, `queue`, `json`, `random`)
+- Librerías estándar: `threading`, `socket`, `queue`, `json`, `random`, `sqlite3`
 
 ---
 
-## 🧠 Estructura del proyecto
+## 🧠 Estructura del Proyecto
 
 ```
 .
@@ -40,7 +39,7 @@ La solución está diseñada con una estructura escalable y modular, fácilmente
 
 ---
 
-## 🚀 Ejecución en entorno local
+## 🚀 Ejecución en Entorno Local
 
 ### 1. Clonar el repositorio
 
@@ -49,16 +48,16 @@ git clone https://github.com/mgalim/sistema-distribuido.git
 cd sistema-distribuido
 ```
 
-### 2. Iniciar uno o más servidores (workers)
+---
+
+### 2. Iniciar el servidor (worker principal)
 
 ```bash
 python server.py
 ```
 
-Por defecto, escucha en `0.0.0.0:5000`.  
-Podés lanzar múltiples instancias en distintos puertos asi:
-
-Ejemplo:
+Por defecto, el servidor escucha en `127.0.0.1:5000`.  
+Podés lanzar múltiples instancias en distintos puertos para simular varios nodos:
 
 ```bash
 python server.py 5000
@@ -66,11 +65,13 @@ python server.py 5001
 python server.py 5002
 ```
 
+Cada instancia gestionará su propia cola y base de datos local (`resultados.db`).
+
 ---
 
-### 3. (Opcional) Configurar NGINX como balanceador
+### 3. (Opcional) Balanceo de carga con NGINX
 
-Archivo `nginx.conf` mínimo:
+Archivo de configuración mínimo (`nginx.conf`):
 
 ```nginx
 stream {
@@ -86,7 +87,7 @@ stream {
 }
 ```
 
-Inicia NGINX y conéctate luego a `localhost:6000` desde el cliente.
+Luego, iniciá NGINX y conectate a `localhost:6000` desde el cliente.
 
 ---
 
@@ -96,11 +97,20 @@ Inicia NGINX y conéctate luego a `localhost:6000` desde el cliente.
 python client.py
 ```
 
-El cliente enviará cinco tareas al servidor y recibirá las respuestas procesadas por los workers.
+El cliente enviará cinco tareas al servidor y mostrará las respuestas procesadas por los workers.
+
+---
+
+## 🧩 Notas Técnicas
+
+- El servidor puede ejecutar múltiples hilos de trabajo en paralelo para procesar tareas concurrentes.
+- El diseño facilita la evolución hacia una arquitectura **Master/Worker real** o integración con **mensajería externa**.
+- El uso de `127.0.0.1` garantiza seguridad local evitando exposición externa (más seguro que `0.0.0.0`).
 
 ---
 
 ## 👨‍💻 Autor
 
-Practica formativa obligatoria nº 3 - Programación sobre redes, desarrollado por **Marcelo Galimberti**  
-IFTS nº 29 | 2025
+**Practica Formativa Obligatoria N.º 3 — Programación sobre Redes**  
+Desarrollado por **Marcelo Galimberti**  
+**IFTS N.º 29 | 2025**
